@@ -1,0 +1,17 @@
+upstream yourip {
+  {{ range $server := .app_server }}
+  server {{ $server.Value }};
+  {{ end }}
+}
+
+server {
+  server_name yourip.cydev.ru;
+
+  location / {
+    proxy_pass http://yourip;
+    proxy_redirect off;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  }
+}
